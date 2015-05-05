@@ -49,7 +49,6 @@ var TypeaheadTokenizer = React.createClass({
     var classList = React.addons.classSet(tokenClasses);
     //add normal tokens
     var result = this.state.selected.map(function(selected) {
-      console.log("DEFAULT SELECTED: ", selected);
       return ( 
         <Token 
           key={ selected.name } 
