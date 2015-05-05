@@ -92,7 +92,6 @@ var TypeaheadTokenizer = React.createClass({
     var index = -1;
     for (var i=0; i<this.state.selected.length; i++) {
       var obj = this.state.selected[i];
-      console.log("TOKEN OBJECT: ", obj);
       if (obj.name === value) {
         index = i;
       }
