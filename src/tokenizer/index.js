@@ -25,7 +25,7 @@ var TypeaheadTokenizer = React.createClass({
 
   getInitialState: function() {
     return {
-      selected: this.props.defaultSelected
+      selected: this.props.defaultSelected,
     };
   },
 
@@ -47,14 +47,18 @@ var TypeaheadTokenizer = React.createClass({
     var tokenClasses = {}
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
     var classList = React.addons.classSet(tokenClasses);
+    //add normal tokens
     var result = this.state.selected.map(function(selected) {
-      return (
-        <Token key={ selected } className={classList}
-          onRemove={ this._removeTokenForValue }>
-          { selected }
-        </Token>
+      console.log("DEFAULT SELECTED: ", selected);
+      return ( 
+        <Token 
+          key={ selected.name } 
+          className={classList}
+          onRemove={ this._removeTokenForValue }
+          isPermanent={selected.perm}
+          name={selected.name}/>
       )
-    }, this);
+     }, this);
     return result;
   },
 
@@ -86,7 +90,14 @@ var TypeaheadTokenizer = React.createClass({
   },
 
   _removeTokenForValue: function(value) {
-    var index = this.state.selected.indexOf(value);
+    var index = -1;
+    for (var i=0; i<this.state.selected.length; i++) {
+      var obj = this.state.selected[i];
+      console.log("TOKEN OBJECT: ", obj);
+      if (obj.name === value) {
+        index = i;
+      }
+    }
     if (index == -1) {
       return;
     }
@@ -101,7 +112,8 @@ var TypeaheadTokenizer = React.createClass({
     if (this.state.selected.indexOf(value) != -1) {
       return;
     }
-    this.state.selected.push(value);
+    var obj = { name : value, perm : false};
+    this.state.selected.push(obj);
     this.setState({selected: this.state.selected});
     this.refs.typeahead.setEntryText("");
     this.props.onTokenAdd(this.state.selected);
