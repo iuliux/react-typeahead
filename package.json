@@ -8,10 +8,10 @@
     "tokenizer",
     "react-component"
   ],
-  "homepage": "https://github.com/fmoo/react-typeahead",
+  "homepage": "https://github.com/godd9170/react-typeahead",
   "bugs": {
-    "url": "https://github.com/fmoo/react-typeahead/issues",
-    "email": "ruibalp@gmail.com"
+    "url": "https://github.com/godd9170/react-typeahead/issues",
+    "email": "godd9170@mylaurier.ca"
   },
   "license": "ISC",
   "author": {
@@ -24,11 +24,16 @@
       "name": "Sam Breed",
       "email": "sam@quickleft.com",
       "url": "http://wookiehangover.com"
+    },
+    {
+      "name": "Henry Goddard",
+      "email": "godd9170@mylaurier.ca",
+      "url" : "http://henrygoddard.com"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fmoo/react-typeahead.git"
+    "url": "https://github.com/godd9170/react-typeahead.git"
   },
   "dependencies": {
     "fuzzy": "^0.1.0",
