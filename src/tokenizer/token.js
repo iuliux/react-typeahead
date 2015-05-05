@@ -21,7 +21,7 @@ var Token = React.createClass({
       close = this._makeCloseButton();
     }
     return (
-      <div {...this.props} className="typeahead-token">
+      <div {...this.props} className={"typeahead-token " + this.props.class}>
         {this.props.name}
         {close}
       </div>

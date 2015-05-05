@@ -53,6 +53,7 @@ var TypeaheadTokenizer = React.createClass({
         <Token 
           key={ selected.name } 
           className={classList}
+          class={selected.class}
           onRemove={ this._removeTokenForValue }
           isPermanent={selected.perm}
           name={selected.name}/>
