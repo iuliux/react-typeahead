@@ -118,6 +118,7 @@ var Typeahead = React.createClass({
     else if(this.state.entryValue) {
       console.log("The entry value (else if): ", this.state.entryValue);
       this._onOptionSelected(this.state.entryValue);
+      this.props.onKeyDown(event); 
     }
     //neither the typeahead has a selection nor an input value exists
     else {
@@ -152,7 +153,9 @@ var Typeahead = React.createClass({
   },
 
   _onKeyDown: function(event) {
+
     var handler = this.eventMap()[event.keyCode];
+
 
     if (handler) {
       handler(event);
