@@ -20,7 +20,8 @@ var TypeaheadTokenizer = React.createClass({
     defaultValue: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     onTokenRemove: React.PropTypes.func,
-    onTokenAdd: React.PropTypes.func
+    onTokenAdd: React.PropTypes.func,
+    onDuplicateAdd: React.PropType.func,
   },
 
   getInitialState: function() {
@@ -37,7 +38,8 @@ var TypeaheadTokenizer = React.createClass({
       defaultValue: "",
       placeholder: "",
       onTokenAdd: function() {},
-      onTokenRemove: function() {}
+      onTokenRemove: function() {},
+      onDuplicateAdd: function() {},
     };
   },
 
@@ -48,10 +50,10 @@ var TypeaheadTokenizer = React.createClass({
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
     var classList = React.addons.classSet(tokenClasses);
     //add normal tokens
-    var result = this.state.selected.map(function(selected) {
+    var result = this.state.selected.map(function(selected, idx) {
       return ( 
         <Token 
-          key={ selected.name } 
+          key={ idx } 
           className={classList}
           class={selected.class}
           onRemove={ this._removeTokenForValue }
@@ -90,13 +92,7 @@ var TypeaheadTokenizer = React.createClass({
   },
 
   _removeTokenForValue: function(value) {
-    var index = -1;
-    for (var i=0; i<this.state.selected.length; i++) {
-      var obj = this.state.selected[i];
-      if (obj.name === value) {
-        index = i;
-      }
-    }
+    var index = this._keyInSelected(value);
     if (index == -1) {
       return;
     }
@@ -107,8 +103,19 @@ var TypeaheadTokenizer = React.createClass({
     return;
   },
 
+  _keyInSelected: function(value) {
+    for (var i=0; i<this.state.selected.length; i++) {
+      var obj = this.state.selected[i];
+      if (obj.name === value) {
+        return i;
+      }
+    }
+    return -1;
+  },
+
   _addTokenForValue: function(value) {
-    if (this.state.selected.indexOf(value) != -1) {
+    if (this._keyInSelected(value) != -1) {
+      this.props.onDuplicateAdd(value);
       return;
     }
     this.props.onTokenAdd(value);
