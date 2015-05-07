@@ -21,7 +21,7 @@ var TypeaheadTokenizer = React.createClass({
     placeholder: React.PropTypes.string,
     onTokenRemove: React.PropTypes.func,
     onTokenAdd: React.PropTypes.func,
-    onDuplicateAdd: React.PropType.func,
+    onDuplicateAdd: React.PropTypes.func,
   },
 
   getInitialState: function() {
