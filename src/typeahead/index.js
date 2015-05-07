@@ -109,16 +109,28 @@ var Typeahead = React.createClass({
   },
 
   _onEnter: function(event) {
-    if (!this.refs.sel.state.selection) {
+    console.log("ON ENTER?");
+    //something selected in the typeahead
+    if (!!this.refs.sel && this.refs.sel.state.selection) {
+      this._onOptionSelected(this.refs.sel.state.selection);
+    }
+    //something is typed in the input
+    else if(this.state.entryValue) {
+      console.log("The entry value (else if): ", this.state.entryValue);
+      this._onOptionSelected(this.state.entryValue);
+    }
+    //neither the typeahead has a selection nor an input value exists
+    else {
+      console.log("The entry value (else): ", this.state.entryValue);
       return this.props.onKeyDown(event);
     }
-    this._onOptionSelected(this.refs.sel.state.selection);
   },
 
   _onEscape: function() {
     this.refs.sel.setSelectionIndex(null)
   },
 
+  //If tab, just use the first entry in the typeaheads suggestions
   _onTab: function(event) {
     var option = this.refs.sel.state.selection ?
       this.refs.sel.state.selection : this.state.visible[0];
@@ -128,8 +140,10 @@ var Typeahead = React.createClass({
   eventMap: function(event) {
     var events = {};
 
-    events[KeyEvent.DOM_VK_UP] = this.refs.sel.navUp;
-    events[KeyEvent.DOM_VK_DOWN] = this.refs.sel.navDown;
+    if (!!this.refs.sel) {
+      events[KeyEvent.DOM_VK_DOWN] = this.refs.sel.navDown;
+      events[KeyEvent.DOM_VK_UP] = this.refs.sel.navUp;
+    }
     events[KeyEvent.DOM_VK_RETURN] = events[KeyEvent.DOM_VK_ENTER] = this._onEnter;
     events[KeyEvent.DOM_VK_ESCAPE] = this._onEscape;
     events[KeyEvent.DOM_VK_TAB] = this._onTab;
@@ -138,12 +152,6 @@ var Typeahead = React.createClass({
   },
 
   _onKeyDown: function(event) {
-    // If there are no visible elements, don't perform selector navigation.
-    // Just pass this up to the upstream onKeydown handler
-    if (!this.refs.sel) {
-      return this.props.onKeyDown(event);
-    }
-
     var handler = this.eventMap()[event.keyCode];
 
     if (handler) {
