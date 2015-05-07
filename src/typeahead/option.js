@@ -38,9 +38,9 @@ var TypeaheadOption = React.createClass({
 
     return (
       <li className={classList} onClick={this._onClick}>
-        <a href="#" className={this._getClasses()} ref="anchor">
+        <span className={this._getClasses()} ref="anchor">
           { this.props.children }
-        </a>
+        </span>
       </li>
     );
   },
