@@ -15,13 +15,26 @@ var Token = React.createClass({
     isPermanent: React.PropTypes.bool,
   },
 
+  _isSpecialTag: function(name) {
+    if (name.indexOf("@") > -1) {
+      return "mention ";
+    }
+    else if (name.indexOf("#") > -1) {
+      return "hashtag ";
+    }
+    return "";
+  },
+
   render: function() {
     var close;
     if (!this.props.isPermanent){
       close = this._makeCloseButton();
     }
+
+    var className = "typeahead-token " + this._isSpecialTag(this.props.name) + this.props.name;
+   
     return (
-      <div {...this.props} className={"typeahead-token " + this.props.class}>
+      <div {...this.props} className={className}>
         {this.props.name}
         {close}
       </div>
