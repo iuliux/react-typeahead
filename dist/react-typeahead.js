@@ -1,4 +1,36 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.ReactTypeahead=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+function classNames() {
+	var classes = '';
+	var arg;
+
+	for (var i = 0; i < arguments.length; i++) {
+		arg = arguments[i];
+		if (!arg) {
+			continue;
+		}
+
+		if ('string' === typeof arg || 'number' === typeof arg) {
+			classes += ' ' + arg;
+		} else if (Object.prototype.toString.call(arg) === '[object Array]') {
+			classes += ' ' + classNames.apply(null, arg);
+		} else if ('object' === typeof arg) {
+			for (var key in arg) {
+				if (!arg.hasOwnProperty(key) || !arg[key]) {
+					continue;
+				}
+				classes += ' ' + key;
+			}
+		}
+	}
+	return classes.substr(1);
+}
+
+// safely export classNames in case the script is included directly on a page
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = classNames;
+}
+
+},{}],2:[function(require,module,exports){
 /*
  * Fuzzy
  * https://github.com/myork/fuzzy
@@ -136,7 +168,7 @@ fuzzy.filter = function(pattern, arr, opts) {
 }());
 
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /**
  * PolyFills make me sad
  */
@@ -151,7 +183,9 @@ KeyEvent.DOM_VK_TAB = KeyEvent.DOM_VK_TAB || 9;
 
 module.exports = KeyEvent;
 
-},{}],3:[function(require,module,exports){
+
+
+},{}],4:[function(require,module,exports){
 var Typeahead = require('./typeahead');
 var Tokenizer = require('./tokenizer');
 
@@ -160,7 +194,9 @@ module.exports = {
   Tokenizer: Tokenizer
 };
 
-},{"./tokenizer":4,"./typeahead":6}],4:[function(require,module,exports){
+
+
+},{"./tokenizer":5,"./typeahead":7}],5:[function(require,module,exports){
 /**
  * @jsx React.DOM
  */
@@ -169,6 +205,7 @@ var React = window.React || require('react');
 var Token = require('./token');
 var KeyEvent = require('../keyevent');
 var Typeahead = require('../typeahead');
+var classNames = require('classnames');
 
 /**
  * A typeahead that, when an option is selected, instead of simply filling
@@ -177,18 +214,23 @@ var Typeahead = require('../typeahead');
  */
 var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
   propTypes: {
+    name: React.PropTypes.string,
     options: React.PropTypes.array,
     customClasses: React.PropTypes.object,
+    allowCustomValues: React.PropTypes.number,
     defaultSelected: React.PropTypes.array,
     defaultValue: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     onTokenRemove: React.PropTypes.func,
-    onTokenAdd: React.PropTypes.func
+    onTokenAdd: React.PropTypes.func,
+    maxVisible: React.PropTypes.number
   },
 
   getInitialState: function() {
     return {
-      selected: this.props.defaultSelected
+      // We need to copy this to avoid incorrect sharing
+      // of state across instances (e.g., via getDefaultProps())
+      selected: this.props.defaultSelected.slice(0)
     };
   },
 
@@ -197,6 +239,7 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
       options: [],
       defaultSelected: [],
       customClasses: {},
+      allowCustomValues: 0,
       defaultValue: "",
       placeholder: "",
       onTokenAdd: function() {},
@@ -207,16 +250,17 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
   // TODO: Support initialized tokens
   //
   _renderTokens: function() {
-    var tokenClasses = {}
+    var tokenClasses = {};
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
-    var classList = React.addons.classSet(tokenClasses);
+    var classList = classNames(tokenClasses);
     var result = this.state.selected.map(function(selected) {
       return (
-        React.createElement(Token, {key: selected, className: classList, 
-          onRemove:  this._removeTokenForValue}, 
-          selected 
+        React.createElement(Token, {key:  selected, className: classList, 
+          onRemove:  this._removeTokenForValue, 
+          name:  this.props.name}, 
+           selected 
         )
-      )
+      );
     }, this);
     return result;
   },
@@ -271,33 +315,38 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
   },
 
   render: function() {
-    var classes = {}
+    var classes = {};
     classes[this.props.customClasses.typeahead] = !!this.props.customClasses.typeahead;
-    var classList = React.addons.classSet(classes);
+    var classList = classNames(classes);
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "typeahead-tokenizer"}, 
          this._renderTokens(), 
         React.createElement(Typeahead, {ref: "typeahead", 
           className: classList, 
           placeholder: this.props.placeholder, 
+          allowCustomValues: this.props.allowCustomValues, 
           customClasses: this.props.customClasses, 
           options: this._getOptionsForTypeahead(), 
           defaultValue: this.props.defaultValue, 
+          maxVisible: this.props.maxVisible, 
           onOptionSelected: this._addTokenForValue, 
           onKeyDown: this._onKeyDown})
       )
-    )
+    );
   }
 });
 
 module.exports = TypeaheadTokenizer;
 
-},{"../keyevent":2,"../typeahead":6,"./token":5,"react":"react"}],5:[function(require,module,exports){
+
+
+},{"../keyevent":3,"../typeahead":7,"./token":6,"classnames":1,"react":"react"}],6:[function(require,module,exports){
 /**
  * @jsx React.DOM
  */
 
 var React = window.React || require('react');
+var classNames = require('classnames');
 
 /**
  * Encapsulates the rendering of an option that has been "selected" in a
@@ -305,20 +354,43 @@ var React = window.React || require('react');
  */
 var Token = React.createClass({displayName: "Token",
   propTypes: {
+    className: React.PropTypes.string,
+    name: React.PropTypes.string,
     children: React.PropTypes.string,
     onRemove: React.PropTypes.func
   },
 
   render: function() {
+    var className = classNames([
+      "typeahead-token",
+      this.props.className
+    ]);
+
     return (
-      React.createElement("div", React.__spread({},  this.props, {className: "typeahead-token"}), 
+      React.createElement("div", {className: className}, 
+        this._renderHiddenInput(), 
         this.props.children, 
-        this._makeCloseButton()
+        this._renderCloseButton()
       )
     );
   },
 
-  _makeCloseButton: function() {
+  _renderHiddenInput: function() {
+    // If no name was set, don't create a hidden input
+    if (!this.props.name) {
+      return null;
+    }
+
+    return (
+      React.createElement("input", {
+        type: "hidden", 
+        name:  this.props.name + '[]', 
+        value:  this.props.children}
+      )
+    );
+  },
+
+  _renderCloseButton: function() {
     if (!this.props.onRemove) {
       return "";
     }
@@ -333,7 +405,9 @@ var Token = React.createClass({displayName: "Token",
 
 module.exports = Token;
 
-},{"react":"react"}],6:[function(require,module,exports){
+
+
+},{"classnames":1,"react":"react"}],7:[function(require,module,exports){
 /**
  * @jsx React.DOM
  */
@@ -342,6 +416,7 @@ var React = window.React || require('react/addons');
 var TypeaheadSelector = require('./selector');
 var KeyEvent = require('../keyevent');
 var fuzzy = require('fuzzy');
+var classNames = require('classnames');
 
 /**
  * A "typeahead", an auto-completing text input
@@ -351,9 +426,11 @@ var fuzzy = require('fuzzy');
  */
 var Typeahead = React.createClass({displayName: "Typeahead",
   propTypes: {
+    name: React.PropTypes.string,
     customClasses: React.PropTypes.object,
     maxVisible: React.PropTypes.number,
     options: React.PropTypes.array,
+    allowCustomValues: React.PropTypes.number,
     defaultValue: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     onOptionSelected: React.PropTypes.func,
@@ -364,6 +441,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     return {
       options: [],
       customClasses: {},
+      allowCustomValues: 0,
       defaultValue: "",
       placeholder: "",
       onKeyDown: function(event) { return },
@@ -373,9 +451,6 @@ var Typeahead = React.createClass({displayName: "Typeahead",
 
   getInitialState: function() {
     return {
-      // The set of all options... Does this need to be state?  I guess for lazy load...
-      options: this.props.options,
-
       // The currently visible set of options
       visible: this.getOptionsForValue(this.props.defaultValue, this.props.options),
 
@@ -403,6 +478,22 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     this._onTextEntryUpdated();
   },
 
+  _hasCustomValue: function() {
+    if (this.props.allowCustomValues > 0 &&
+      this.state.entryValue.length >= this.props.allowCustomValues &&
+      this.state.visible.indexOf(this.state.entryValue) < 0) {
+      return true;
+    }
+    return false;
+  },
+
+  _getCustomValue: function() {
+    if (this._hasCustomValue()) {
+      return this.state.entryValue;
+    }
+    return null
+  },
+
   _renderIncrementalSearchResults: function() {
     // Nothing has been entered into the textbox
     if (!this.state.entryValue) {
@@ -415,8 +506,18 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     }
 
     // There are no typeahead / autocomplete suggestions
-    if (!this.state.visible.length) {
+    if (!this.state.visible.length && !(this.props.allowCustomValues > 0)) {
       return "";
+    }
+
+    if (this._hasCustomValue()) {
+      return (
+        React.createElement(TypeaheadSelector, {
+          ref: "sel", options: this.state.visible, 
+          customValue: this.state.entryValue, 
+          onOptionSelected: this._onOptionSelected, 
+          customClasses: this.props.customClasses})
+      );
     }
 
     return (
@@ -427,19 +528,19 @@ var Typeahead = React.createClass({displayName: "Typeahead",
    );
   },
 
-  _onOptionSelected: function(option) {
+  _onOptionSelected: function(option, event) {
     var nEntry = this.refs.entry.getDOMNode();
     nEntry.focus();
     nEntry.value = option;
-    this.setState({visible: this.getOptionsForValue(option, this.state.options),
+    this.setState({visible: this.getOptionsForValue(option, this.props.options),
                    selection: option,
                    entryValue: option});
-    this.props.onOptionSelected(option);
+    return this.props.onOptionSelected(option, event);
   },
 
   _onTextEntryUpdated: function() {
     var value = this.refs.entry.getDOMNode().value;
-    this.setState({visible: this.getOptionsForValue(value, this.state.options),
+    this.setState({visible: this.getOptionsForValue(value, this.props.options),
                    selection: null,
                    entryValue: value});
   },
@@ -448,7 +549,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     if (!this.refs.sel.state.selection) {
       return this.props.onKeyDown(event);
     }
-    this._onOptionSelected(this.refs.sel.state.selection);
+    return this._onOptionSelected(this.refs.sel.state.selection, event);
   },
 
   _onEscape: function() {
@@ -457,8 +558,15 @@ var Typeahead = React.createClass({displayName: "Typeahead",
 
   _onTab: function(event) {
     var option = this.refs.sel.state.selection ?
-      this.refs.sel.state.selection : this.state.visible[0];
-    this._onOptionSelected(option)
+      this.refs.sel.state.selection : (this.state.visible.length > 0 ? this.state.visible[0] : null);
+
+    if (option === null && this._hasCustomValue()) {
+      option = this._getCustomValue();
+    }
+
+    if (option !== null) {
+      return this._onOptionSelected(option, event);
+    }
   },
 
   eventMap: function(event) {
@@ -491,24 +599,47 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     event.preventDefault();
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      visible: this.getOptionsForValue(this.state.entryValue, nextProps.options)
+    });
+  },
+
   render: function() {
     var inputClasses = {}
     inputClasses[this.props.customClasses.input] = !!this.props.customClasses.input;
-    var inputClassList = React.addons.classSet(inputClasses)
+    var inputClassList = classNames(inputClasses);
 
     var classes = {
       typeahead: true
     }
     classes[this.props.className] = !!this.props.className;
-    var classList = React.addons.classSet(classes);
+    var classList = classNames(classes);
 
     return (
       React.createElement("div", {className: classList}, 
+         this._renderHiddenInput(), 
         React.createElement("input", {ref: "entry", type: "text", 
           placeholder: this.props.placeholder, 
-          className: inputClassList, defaultValue: this.state.entryValue, 
+          className: inputClassList, 
+          value: this.state.entryValue, 
+          defaultValue: this.props.defaultValue, 
           onChange: this._onTextEntryUpdated, onKeyDown: this._onKeyDown}), 
          this._renderIncrementalSearchResults() 
+      )
+    );
+  },
+
+  _renderHiddenInput: function() {
+    if (!this.props.name) {
+      return null;
+    }
+
+    return (
+      React.createElement("input", {
+        type: "hidden", 
+        name:  this.props.name, 
+        value:  this.state.selection}
       )
     );
   }
@@ -516,12 +647,15 @@ var Typeahead = React.createClass({displayName: "Typeahead",
 
 module.exports = Typeahead;
 
-},{"../keyevent":2,"./selector":8,"fuzzy":1,"react/addons":"react/addons"}],7:[function(require,module,exports){
+
+
+},{"../keyevent":3,"./selector":9,"classnames":1,"fuzzy":2,"react/addons":"react/addons"}],8:[function(require,module,exports){
 /**
  * @jsx React.DOM
  */
 
 var React = window.React || require('react/addons');
+var classNames = require('classnames');
 
 /**
  * A single option within the TypeaheadSelector
@@ -529,35 +663,39 @@ var React = window.React || require('react/addons');
 var TypeaheadOption = React.createClass({displayName: "TypeaheadOption",
   propTypes: {
     customClasses: React.PropTypes.object,
+    customValue: React.PropTypes.string,
     onClick: React.PropTypes.func,
-    children: React.PropTypes.string
+    children: React.PropTypes.string,
+    hover: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       customClasses: {},
-      onClick: function(event) { 
-        event.preventDefault(); 
+      onClick: function(event) {
+        event.preventDefault();
       }
     };
   },
 
   getInitialState: function() {
-    return {
-      hover: false
-    };
+    return {};
   },
 
   render: function() {
-    var classes = {
-      hover: this.props.hover
-    }
+    var classes = {};
+    classes[this.props.customClasses.hover || "hover"] = !!this.props.hover;
     classes[this.props.customClasses.listItem] = !!this.props.customClasses.listItem;
-    var classList = React.addons.classSet(classes);
+
+    if (this.props.customValue) {
+      classes[this.props.customClasses.customAdd] = !!this.props.customClasses.customAdd;
+    }
+
+    var classList = classNames(classes);
 
     return (
       React.createElement("li", {className: classList, onClick: this._onClick}, 
-        React.createElement("a", {href: "#", className: this._getClasses(), ref: "anchor"}, 
+        React.createElement("a", {href: "javascript: void 0;", className: this._getClasses(), ref: "anchor"}, 
            this.props.children
         )
       )
@@ -569,24 +707,29 @@ var TypeaheadOption = React.createClass({displayName: "TypeaheadOption",
       "typeahead-option": true,
     };
     classes[this.props.customClasses.listAnchor] = !!this.props.customClasses.listAnchor;
-    return React.addons.classSet(classes);
+
+    return classNames(classes);
   },
 
-  _onClick: function() {
-    return this.props.onClick();
+  _onClick: function(event) {
+    event.preventDefault();
+    return this.props.onClick(event);
   }
 });
 
 
 module.exports = TypeaheadOption;
 
-},{"react/addons":"react/addons"}],8:[function(require,module,exports){
+
+
+},{"classnames":1,"react/addons":"react/addons"}],9:[function(require,module,exports){
 /**
  * @jsx React.DOM
  */
 
 var React = window.React || require('react/addons');
 var TypeaheadOption = require('./option');
+var classNames = require('classnames');
 
 /**
  * Container for the options rendered as part of the autocompletion process
@@ -596,6 +739,7 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
   propTypes: {
     options: React.PropTypes.array,
     customClasses: React.PropTypes.object,
+    customValue: React.PropTypes.string,
     selectionIndex: React.PropTypes.number,
     onOptionSelected: React.PropTypes.func
   },
@@ -604,6 +748,7 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
     return {
       selectionIndex: null,
       customClasses: {},
+      customValue: null,
       onOptionSelected: function(option) { }
     };
   },
@@ -620,19 +765,35 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
       "typeahead-selector": true
     };
     classes[this.props.customClasses.results] = this.props.customClasses.results;
-    var classList = React.addons.classSet(classes);
+    var classList = classNames(classes);
 
-    var results = this.props.options.map(function(result, i) {
-      return (
+    var results = [];
+    // CustomValue should be added to top of results list with different class name
+    if (this.props.customValue !== null) {
+
+      results.push(
+        React.createElement(TypeaheadOption, {ref: this.props.customValue, key: this.props.customValue, 
+          hover: this.state.selectionIndex === results.length, 
+          customClasses: this.props.customClasses, 
+          customValue: this.props.customValue, 
+          onClick: this._onClick.bind(this, this.props.customValue)}, 
+           this.props.customValue
+        ));
+    }
+
+    this.props.options.forEach(function(result, i) {
+      results.push (
         React.createElement(TypeaheadOption, {ref: result, key: result, 
-          hover: this.state.selectionIndex === i, 
+          hover: this.state.selectionIndex === results.length, 
           customClasses: this.props.customClasses, 
           onClick: this._onClick.bind(this, result)}, 
-          result 
+           result 
         )
       );
     }, this);
-    return React.createElement("ul", {className: classList}, results );
+
+
+    return React.createElement("ul", {className: classList},  results );
   },
 
   setSelectionIndex: function(index) {
@@ -646,32 +807,37 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
     if (index === null) {
       return null;
     }
+    if (index === 0 && this.props.customValue !== null) {
+      return this.props.customValue;
+    }
+
+    if (this.props.customValue !== null) {
+      index -= 1;
+    }
+
     return this.props.options[index];
   },
 
-  _onClick: function(result) {
-    this.props.onOptionSelected(result);
+  _onClick: function(result, event) {
+    return this.props.onOptionSelected(result, event);
   },
 
   _nav: function(delta) {
-    if (!this.props.options) {
-      return; 
+    if (!this.props.options && this.props.customValue === null) {
+      return;
     }
-    var newIndex;
-    if (this.state.selectionIndex === null) {
-      if (delta == 1) {
-        newIndex = 0;
-      } else {
-        newIndex = delta;
-      }
-    } else {
-      newIndex = this.state.selectionIndex + delta;
+    var newIndex = this.state.selectionIndex === null ? (delta == 1 ? 0 : delta) : this.state.selectionIndex + delta;
+    var length = this.props.options.length;
+    if (this.props.customValue !== null) {
+      length += 1;
     }
+
     if (newIndex < 0) {
-      newIndex += this.props.options.length;
-    } else if (newIndex >= this.props.options.length) {
-      newIndex -= this.props.options.length;
+      newIndex += length;
+    } else if (newIndex >= length) {
+      newIndex -= length;
     }
+
     var newSelection = this.getSelectionForIndex(newIndex);
     this.setState({selectionIndex: newIndex,
                    selection: newSelection});
@@ -689,5 +855,7 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
 
 module.exports = TypeaheadSelector;
 
-},{"./option":7,"react/addons":"react/addons"}]},{},[3])(3)
+
+
+},{"./option":8,"classnames":1,"react/addons":"react/addons"}]},{},[4])(4)
 });

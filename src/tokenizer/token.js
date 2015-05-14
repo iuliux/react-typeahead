@@ -2,7 +2,8 @@
  * @jsx React.DOM
  */
 
-var React = window.React || require('react');
+var React = require('react');
+var classNames = require('classnames');
 
 /**
  * Encapsulates the rendering of an option that has been "selected" in a
@@ -11,8 +12,31 @@ var React = window.React || require('react');
 var Token = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
-    onRemove: React.PropTypes.func,
     isPermanent: React.PropTypes.bool,
+    className: React.PropTypes.string,
+    children: React.PropTypes.string,
+    onRemove: React.PropTypes.func
+  },
+
+  render: function() {
+    var close;
+    if (!this.props.isPermanent){
+      close = this._renderCloseButton()
+    }
+
+    var className = classNames([
+      "typeahead-token",
+      this._isSpecialTag(this.props.name),
+      this.props.className,
+    ]);
+
+    return (
+      <div className={className}>
+        {this._renderHiddenInput()}
+        {this.props.children}
+        {close}
+      </div>
+    );
   },
 
   _isSpecialTag: function(name) {
@@ -25,33 +49,33 @@ var Token = React.createClass({
     return "";
   },
 
-  render: function() {
-    var close;
-    if (!this.props.isPermanent){
-      close = this._makeCloseButton();
+  _renderHiddenInput: function() {
+    // If no name was set, don't create a hidden input
+    if (!this.props.name) {
+      return null;
     }
 
-    var className = "typeahead-token " + this._isSpecialTag(this.props.name) + this.props.name;
-   
     return (
-      <div {...this.props} className={className}>
-        {this.props.name}
-        {close}
-      </div>
+      <input
+        type="hidden"
+        name={ this.props.name + '[]' }
+        value={ this.props.children }
+      />
     );
   },
 
-  _makeCloseButton: function() {
+  _renderCloseButton: function() {
     if (!this.props.onRemove) {
       return "";
     }
     return (
       <a className="typeahead-token-close" href="#" onClick={function(event) {
-          event.preventDefault();
-          this.props.onRemove(this.props.name);
-        }.bind(this)}>&#x00d7;</a>
+        event.preventDefault();
+        this.props.onRemove(this.props.name);
+      }.bind(this)}>&#x00d7;</a>
     );
   }
+
 });
 
 module.exports = Token;

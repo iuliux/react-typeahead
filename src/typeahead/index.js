@@ -2,10 +2,11 @@
  * @jsx React.DOM
  */
 
-var React = window.React || require('react/addons');
+var React = require('react/addons');
 var TypeaheadSelector = require('./selector');
 var KeyEvent = require('../keyevent');
 var fuzzy = require('fuzzy');
+var classNames = require('classnames');
 
 /**
  * A "typeahead", an auto-completing text input
@@ -15,9 +16,11 @@ var fuzzy = require('fuzzy');
  */
 var Typeahead = React.createClass({
   propTypes: {
+    name: React.PropTypes.string,
     customClasses: React.PropTypes.object,
     maxVisible: React.PropTypes.number,
     options: React.PropTypes.array,
+    allowCustomValues: React.PropTypes.number,
     defaultValue: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     onOptionSelected: React.PropTypes.func,
@@ -28,6 +31,7 @@ var Typeahead = React.createClass({
     return {
       options: [],
       customClasses: {},
+      allowCustomValues: 0,
       defaultValue: "",
       placeholder: "",
       onKeyDown: function(event) { return },
@@ -37,9 +41,6 @@ var Typeahead = React.createClass({
 
   getInitialState: function() {
     return {
-      // The set of all options... Does this need to be state?  I guess for lazy load...
-      options: this.props.options,
-
       // The currently visible set of options
       visible: this.getOptionsForValue(this.props.defaultValue, this.props.options),
 
@@ -67,6 +68,22 @@ var Typeahead = React.createClass({
     this._onTextEntryUpdated();
   },
 
+  _hasCustomValue: function() {
+    if (this.props.allowCustomValues > 0 &&
+      this.state.entryValue.length >= this.props.allowCustomValues &&
+      this.state.visible.indexOf(this.state.entryValue) < 0) {
+      return true;
+    }
+    return false;
+  },
+
+  _getCustomValue: function() {
+    if (this._hasCustomValue()) {
+      return this.state.entryValue;
+    }
+    return null
+  },
+
   _renderIncrementalSearchResults: function() {
     // Nothing has been entered into the textbox
     if (!this.state.entryValue) {
@@ -79,8 +96,18 @@ var Typeahead = React.createClass({
     }
 
     // There are no typeahead / autocomplete suggestions
-    if (!this.state.visible.length) {
+    if (!this.state.visible.length && !(this.props.allowCustomValues > 0)) {
       return "";
+    }
+
+    if (this._hasCustomValue()) {
+      return (
+        <TypeaheadSelector
+          ref="sel" options={this.state.visible}
+          customValue={this.state.entryValue}
+          onOptionSelected={this._onOptionSelected}
+          customClasses={this.props.customClasses} />
+      );
     }
 
     return (
@@ -91,19 +118,19 @@ var Typeahead = React.createClass({
    );
   },
 
-  _onOptionSelected: function(option) {
+  _onOptionSelected: function(option, event) {
     var nEntry = this.refs.entry.getDOMNode();
     nEntry.focus();
     nEntry.value = option;
-    this.setState({visible: this.getOptionsForValue(option, this.state.options),
+    this.setState({visible: this.getOptionsForValue(option, this.props.options),
                    selection: option,
                    entryValue: option});
-    this.props.onOptionSelected(option);
+    return this.props.onOptionSelected(option, event);
   },
 
   _onTextEntryUpdated: function() {
     var value = this.refs.entry.getDOMNode().value;
-    this.setState({visible: this.getOptionsForValue(value, this.state.options),
+    this.setState({visible: this.getOptionsForValue(value, this.props.options),
                    selection: null,
                    entryValue: value});
   },
@@ -118,13 +145,14 @@ var Typeahead = React.createClass({
     else if(this.state.entryValue) {
       console.log("The entry value (else if): ", this.state.entryValue);
       this._onOptionSelected(this.state.entryValue);
-      this.props.onKeyDown(event); 
+      this.props.onKeyDown(event);
     }
     //neither the typeahead has a selection nor an input value exists
     else {
       console.log("The entry value (else): ", this.state.entryValue);
       return this.props.onKeyDown(event);
     }
+    return this._onOptionSelected(this.refs.sel.state.selection, event);
   },
 
   _onEscape: function() {
@@ -134,8 +162,15 @@ var Typeahead = React.createClass({
   //If tab, just use the first entry in the typeaheads suggestions
   _onTab: function(event) {
     var option = this.refs.sel.state.selection ?
-      this.refs.sel.state.selection : this.state.visible[0];
-    this._onOptionSelected(option)
+      this.refs.sel.state.selection : (this.state.visible.length > 0 ? this.state.visible[0] : null);
+
+    if (option === null && this._hasCustomValue()) {
+      option = this._getCustomValue();
+    }
+
+    if (option !== null) {
+      return this._onOptionSelected(option, event);
+    }
   },
 
   eventMap: function(event) {
@@ -166,25 +201,48 @@ var Typeahead = React.createClass({
     event.preventDefault();
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      visible: this.getOptionsForValue(this.state.entryValue, nextProps.options)
+    });
+  },
+
   render: function() {
     var inputClasses = {}
     inputClasses[this.props.customClasses.input] = !!this.props.customClasses.input;
-    var inputClassList = React.addons.classSet(inputClasses)
+    var inputClassList = classNames(inputClasses);
 
     var classes = {
       typeahead: true
     }
     classes[this.props.className] = !!this.props.className;
-    var classList = React.addons.classSet(classes);
+    var classList = classNames(classes);
 
     return (
       <div className={classList}>
+        { this._renderHiddenInput() }
         <input ref="entry" type="text"
           placeholder={this.props.placeholder}
-          className={inputClassList} defaultValue={this.state.entryValue}
+          className={inputClassList}
+          value={this.state.entryValue}
+          defaultValue={this.props.defaultValue}
           onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown} />
         { this._renderIncrementalSearchResults() }
       </div>
+    );
+  },
+
+  _renderHiddenInput: function() {
+    if (!this.props.name) {
+      return null;
+    }
+
+    return (
+      <input
+        type="hidden"
+        name={ this.props.name }
+        value={ this.state.selection }
+      />
     );
   }
 });
