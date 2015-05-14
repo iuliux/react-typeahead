@@ -1,6 +1,6 @@
 {
   "name": "react-typeahead",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "React-based typeahead and typeahead-tokenizer",
   "keywords": [
     "react",
@@ -28,7 +28,7 @@
     {
       "name": "Henry Goddard",
       "email": "godd9170@mylaurier.ca",
-      "url" : "http://henrygoddard.com"
+      "url": "http://henrygoddard.com"
     }
   ],
   "repository": {
