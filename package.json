@@ -1,6 +1,6 @@
 {
   "name": "react-typeahead",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "React-based typeahead and typeahead-tokenizer",
   "keywords": [
     "react",
@@ -76,10 +76,5 @@
   "literalify": {
     "react": "window.React || require('react')",
     "react/addons": "window.React || require('react/addons')"
-  },
-  "browserify": {
-    "transform": [
-      "reactify"
-    ]
   }
 }
