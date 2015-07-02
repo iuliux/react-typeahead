@@ -13,15 +13,19 @@ var Token = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     isPermanent: React.PropTypes.bool,
+    isSuggested: React.PropTypes.bool,
     className: React.PropTypes.string,
     children: React.PropTypes.string,
-    onRemove: React.PropTypes.func
+    onRemove: React.PropTypes.func,
+    onApprove: React.PropTypes.func
   },
 
   render: function() {
-    var close;
-    if (!this.props.isPermanent){
-      close = this._renderCloseButton()
+    var actions;
+    if (!this.props.isPermanent && !this.props.isSuggested){
+      actions = this._renderCloseButton();
+    } else if (this.props.isSuggested) {
+      actions = this._renderSuggestedConfirmation();
     }
 
     var className = classNames(
@@ -35,7 +39,7 @@ var Token = React.createClass({
       <div className={className}>
         {this._renderHiddenInput()}
         {this.props.name}
-        {close}
+        {actions}
       </div>
     );
   },
@@ -62,6 +66,21 @@ var Token = React.createClass({
         name={ this.props.name + '[]' }
         value={ this.props.children }
       />
+    );
+  },
+
+  _renderSuggestedConfirmation: function() {
+    return (
+      <span>
+        <a className="typeahead-token-close" href="#" onClick={function(event) {
+            event.preventDefault();
+            this.props.onApprove(this.props.name);
+          }.bind(this)}>&#x2713;</a>
+        <a className="typeahead-token-close" href="#" onClick={function(event) {
+            event.preventDefault();
+            this.props.onRemove(this.props.name);
+          }.bind(this)}>&#x00d7;</a>
+      </span>
     );
   },
 
