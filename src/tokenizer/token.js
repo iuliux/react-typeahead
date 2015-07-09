@@ -17,7 +17,15 @@ var Token = React.createClass({
     className: React.PropTypes.string,
     children: React.PropTypes.string,
     onRemove: React.PropTypes.func,
-    onApprove: React.PropTypes.func
+    onApprove: React.PropTypes.func,
+    onDisapprove: React.PropTypes.func,
+  },
+
+  getDefaultProps() {
+    return {
+      onApprove: function() {},
+      onDisapprove: function() {},
+    };
   },
 
   render: function() {
@@ -72,13 +80,13 @@ var Token = React.createClass({
   _renderSuggestedConfirmation: function() {
     return (
       <span>
-        <a className="typeahead-token-close" href="#" onClick={function(event) {
+        <a className="typeahead-token-check" href="#" onClick={function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
           }.bind(this)}>&#x2713;</a>
         <a className="typeahead-token-close" href="#" onClick={function(event) {
             event.preventDefault();
-            this.props.onRemove(this.props.name);
+            this.props.onDisapprove(this.props.name);
           }.bind(this)}>&#x00d7;</a>
       </span>
     );
