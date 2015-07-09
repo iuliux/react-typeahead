@@ -26,6 +26,7 @@ var TypeaheadTokenizer = React.createClass({
     onTokenRemove: React.PropTypes.func,
     onTokenAdd: React.PropTypes.func,
     onTokenApprove: React.PropTypes.func,
+    onTokenDisapprove: React.PropTypes.func,
     onDuplicateAdd: React.PropTypes.func,
     filterOption: React.PropTypes.func,
     maxVisible: React.PropTypes.number
@@ -70,6 +71,7 @@ var TypeaheadTokenizer = React.createClass({
         class={selected.class}
         onRemove={ this._removeTokenForValue }
         onApprove={ this._approveTokenForValue }
+        onDisapprove={ this._disapproveTokenForValue }
         isPermanent={selected.perm}
         isSuggested={selected.suggested}
         name={selected.name}/>
@@ -107,6 +109,11 @@ var TypeaheadTokenizer = React.createClass({
 
   _approveTokenForValue: function(value) {
     this.props.onTokenApprove(value);
+    return;
+  },
+
+  _disapproveTokenForValue: function(value) {
+    this.props.onTokenDisapprove(value);
     return;
   },
 
