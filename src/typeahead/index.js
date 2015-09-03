@@ -168,7 +168,7 @@ var Typeahead = React.createClass({
   },
 
   _onEscape: function() {
-    this.refs.sel.setSelectionIndex(null)
+    this.props.onBlur();
   },
 
   //If tab, just use the first entry in the typeaheads suggestions
