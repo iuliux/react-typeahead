@@ -97,10 +97,12 @@ var Token = React.createClass({
       return "";
     }
     return (
-      <a className="typeahead-token-close" href="#" onClick={function(event) {
-        event.preventDefault();
-        this.props.onRemove(this.props.name);
-      }.bind(this)}>&#x00d7;</a>
+      <span>
+        <a className="typeahead-token-close" href="#" onClick={function(event) {
+          event.preventDefault();
+          this.props.onRemove(this.props.name);
+        }.bind(this)}>&#x00d7;</a>
+      </span>
     );
   }
 
