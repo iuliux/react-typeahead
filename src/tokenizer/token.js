@@ -79,7 +79,7 @@ var Token = React.createClass({
 
   _renderSuggestedConfirmation: function() {
     return (
-      <span>
+      <span className="typeahead-token-controls">
         <a className="typeahead-token-check" href="#" onClick={function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
@@ -97,7 +97,7 @@ var Token = React.createClass({
       return "";
     }
     return (
-      <span>
+      <span className="typeahead-token-controls">
         <a className="typeahead-token-close" href="#" onClick={function(event) {
           event.preventDefault();
           this.props.onRemove(this.props.name);
