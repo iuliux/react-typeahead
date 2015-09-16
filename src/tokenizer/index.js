@@ -132,7 +132,8 @@ var TypeaheadTokenizer = React.createClass({
   _keyInSelected: function(value) {
     for (var i=0; i<this.state.selected.length; i++) {
       var obj = this.state.selected[i];
-      if (obj.name === value) {
+      var value = typeof value === 'object' ? (value.name || '') : value;
+      if (obj.name.toLowerCase() === value.toLowerCase()) {
         return i;
       }
     }
