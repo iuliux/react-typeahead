@@ -271,14 +271,12 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
   _renderTokens: function() {
     var tokenClasses = {};
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
-    var classList = classNames(tokenClasses);
     //add normal tokens
     var result = this.state.selected.map(function(selected, idx) {
       return (
         React.createElement(Token, {
         key:  idx, 
-        className: classList, 
-        class: selected.class, 
+        className: classNames(tokenClasses, (!!selected.class ? selected.class : '')), 
         onRemove:  this._removeTokenForValue, 
         onApprove:  this._approveTokenForValue, 
         onDisapprove:  this._disapproveTokenForValue, 
@@ -438,7 +436,6 @@ var Token = React.createClass({displayName: "Token",
     var className = classNames(
       "typeahead-token",
       this._isSpecialTag(this.props.name),
-      this.props.class, // TODO: get rid this.props.class... should be className
       this.props.className
     );
 
@@ -482,11 +479,11 @@ var Token = React.createClass({displayName: "Token",
         React.createElement("a", {className: "typeahead-token-check", href: "#", onClick: function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
-          }.bind(this)}, "✓"), 
+          }.bind(this)}, React.createElement("i", {className: "fa fa-check"})), 
         React.createElement("a", {className: "typeahead-token-close", href: "#", onClick: function(event) {
             event.preventDefault();
             this.props.onDisapprove(this.props.name);
-          }.bind(this)}, "×")
+          }.bind(this)}, React.createElement("i", {className: "fa fa-times"}))
       )
     );
   },
@@ -500,7 +497,7 @@ var Token = React.createClass({displayName: "Token",
         React.createElement("a", {className: "typeahead-token-close", href: "#", onClick: function(event) {
           event.preventDefault();
           this.props.onRemove(this.props.name);
-        }.bind(this)}, "×")
+        }.bind(this)}, React.createElement("i", {className: "fa fa-times"}))
       )
     );
   }

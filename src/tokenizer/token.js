@@ -39,7 +39,6 @@ var Token = React.createClass({
     var className = classNames(
       "typeahead-token",
       this._isSpecialTag(this.props.name),
-      this.props.class, // TODO: get rid this.props.class... should be className
       this.props.className
     );
 
@@ -83,11 +82,11 @@ var Token = React.createClass({
         <a className="typeahead-token-check" href="#" onClick={function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
-          }.bind(this)}>&#x2713;</a>
+          }.bind(this)}><i className="fa fa-check"/></a>
         <a className="typeahead-token-close" href="#" onClick={function(event) {
             event.preventDefault();
             this.props.onDisapprove(this.props.name);
-          }.bind(this)}>&#x00d7;</a>
+          }.bind(this)}><i className="fa fa-times"/></a>
       </span>
     );
   },
@@ -101,7 +100,7 @@ var Token = React.createClass({
         <a className="typeahead-token-close" href="#" onClick={function(event) {
           event.preventDefault();
           this.props.onRemove(this.props.name);
-        }.bind(this)}>&#x00d7;</a>
+        }.bind(this)}><i className="fa fa-times"/></a>
       </span>
     );
   }
