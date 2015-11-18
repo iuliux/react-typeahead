@@ -113,6 +113,13 @@ var TypeaheadTokenizer = React.createClass({
   },
 
   _disapproveTokenForValue: function(value) {
+    var index = this._keyInSelected(value);
+    if (index == -1) {
+      return;
+    }
+
+    this.state.selected.splice(index, 1);
+    this.setState({selected: this.state.selected});
     this.props.onTokenDisapprove(value);
     return;
   },
