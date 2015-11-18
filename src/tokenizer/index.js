@@ -66,7 +66,7 @@ var TypeaheadTokenizer = React.createClass({
       var key = idx + selected.suggested; //generate key change to force update
       return (
         <Token
-        key={ idx }
+        key={ key }
         className={classNames(tokenClasses, (!!selected.class ? selected.class : ''))}
         onRemove={ this._removeTokenForValue }
         onApprove={ this._approveTokenForValue }
