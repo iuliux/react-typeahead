@@ -361,7 +361,7 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
       return;
     }
     this.props.onTokenAdd(value);
-    var obj = { name : value, perm : false};
+    var obj = { name : value, perm : false, class : 'M'}; //Class is automatically 'M' because you can only enter manual tags
     this.state.selected.push(obj);
     this.setState({selected: this.state.selected});
     this.refs.typeahead.setEntryText("");
