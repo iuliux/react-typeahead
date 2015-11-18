@@ -21,7 +21,7 @@ var Token = React.createClass({
     onDisapprove: React.PropTypes.func,
   },
 
-  getDefaultProps() {
+  getDefaultProps: function() {
     return {
       onApprove: function() {},
       onDisapprove: function() {},

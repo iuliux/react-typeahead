@@ -113,6 +113,7 @@ var TypeaheadTokenizer = React.createClass({
   },
 
   _disapproveTokenForValue: function(value) {
+    console.log("DISAPPROVE AND SPLICE OUT TOKEN OPTIMISTICALLY");
     var index = this._keyInSelected(value);
     if (index == -1) {
       return;
