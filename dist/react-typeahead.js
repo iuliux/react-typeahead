@@ -295,25 +295,7 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
   },
 
   _onKeyDown: function(event) {
-    // We only care about intercepting backspaces
-    if (event.keyCode !== KeyEvent.DOM_VK_BACK_SPACE) {
-      return;
-    }
-
-    // No tokens
-    if (!this.state.selected.length) {
-      return;
-    }
-
-    // Remove token ONLY when bksp pressed at beginning of line
-    // without a selection
-    var entry = this.refs.typeahead.refs.entry.getDOMNode();
-    if (entry.selectionStart == entry.selectionEnd &&
-        entry.selectionStart == 0) {
-      this._removeTokenForValue(
-        this.state.selected[this.state.selected.length - 1]);
-      event.preventDefault();
-    }
+    //do nothing no (used to be to backspace delete tokens)
   },
 
   _approveTokenForValue: function(value) {
@@ -656,7 +638,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
   },
 
   _onTextEntryUpdated: function() {
-    var value = this.refs.entry.getDOMNode().value;
+    var value = this.refs.entry.getDOMNode().value.toLowerCase();
     this.setState({visible: this.getOptionsForValue(value, this.props.options),
                    selection: null,
                    entryValue: value});
