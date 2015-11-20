@@ -273,10 +273,8 @@ var TypeaheadTokenizer = React.createClass({displayName: "TypeaheadTokenizer",
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
     //add normal tokens
     var result = this.state.selected.map(function(selected, idx) {
-      var key = idx + selected.suggested; //generate key change to force update
       return (
         React.createElement(Token, {
-        key:  key, 
         className: classNames(tokenClasses, (!!selected.class ? selected.class : '')), 
         onRemove:  this._removeTokenForValue, 
         onApprove:  this._approveTokenForValue, 
