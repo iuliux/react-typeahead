@@ -45,7 +45,7 @@ var Token = React.createClass({
     return (
       <div className={className}>
         {this._renderHiddenInput()}
-        {this.props.name}
+        {this._renderTagTypeIcon()} {this.props.name}
         {actions}
       </div>
     );
@@ -74,6 +74,16 @@ var Token = React.createClass({
         value={ this.props.children }
       />
     );
+  },
+
+  _renderTagTypeIcon: function() {
+    var icon;
+    if (this.props.isSuggested) {
+      icon = (
+        <i className="fa fa-lightbulb-o"></i>
+      );
+    }
+    return icon;
   },
 
   _renderSuggestedConfirmation: function() {
