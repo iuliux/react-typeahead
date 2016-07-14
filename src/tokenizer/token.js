@@ -45,7 +45,7 @@ var Token = React.createClass({
     return (
       <div className={className}>
         {this._renderHiddenInput()}
-        {this._renderTagTypeIcon()}&nbsp;
+        {this._renderTagTypeIcon()} {'\u00A0'}
         {this.props.name}
         {actions}
       </div>
@@ -79,13 +79,13 @@ var Token = React.createClass({
 
   _renderTagTypeIcon: function() {
     var icon;
-    if (this.props.class == 'S') {
+    if (this.props.className == 'S') {
       icon = (
-        <i className="fa fa-lightbulb-o"></i>
+        <i className="fa fa-lightbulb-o tagtype-icon"></i>
       );
-    } else if (this.props.class == 'K') {
+    } else if (this.props.className == 'K') {
       icon = (
-        <i className="fa fa-bookmark-o"></i>
+        <i className="fa fa-bookmark-o tagtype-icon"></i>
       );
     }
     return icon;
