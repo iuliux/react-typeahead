@@ -595,7 +595,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
   },
 
   focus: function(){
-    this.refs.entry.focus();
+    this.refs.entry.getDOMNode().focus();
   },
 
   _hasCustomValue: function() {
