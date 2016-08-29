@@ -28,11 +28,17 @@ var Token = React.createClass({
     };
   },
 
+  getInitialState: function(){
+    return {
+      isSuggested: this.props.isSuggested
+    };
+  },
+
   render: function() {
     var actions;
-    if (!this.props.isPermanent && !this.props.isSuggested){
+    if (!this.props.isPermanent && !this.state.isSuggested){
       actions = this._renderCloseButton();
-    } else if (this.props.isSuggested) {
+    } else if (this.state.isSuggested) {
       actions = this._renderSuggestedConfirmation();
     }
 
@@ -97,6 +103,9 @@ var Token = React.createClass({
         <a className="typeahead-token-check" href="#" onClick={function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
+            this.setState({
+              isSuggested: false,
+            });
           }.bind(this)}><i className="fa fa-check"/></a>
         <a className="typeahead-token-close" href="#" onClick={function(event) {
             event.preventDefault();
