@@ -130,11 +130,7 @@ var Typeahead = React.createClass({
   },
 
   focus: function(){
-<<<<<<< HEAD
-    this.refs.entry.getDOMNode().focus();
-=======
     this.refs.entry.focus()
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   _hasCustomValue: function() {
@@ -210,38 +206,12 @@ var Typeahead = React.createClass({
   },
 
   _onTextEntryUpdated: function() {
-<<<<<<< HEAD
-    var value = this.refs.entry.getDOMNode().value.toLowerCase();
-    this.setState({visible: this.getOptionsForValue(value, this.props.options),
-                   selection: null,
-=======
-    var value = this.refs.entry.value;
+    var value = this.refs.entry..value.toLowerCase();
     this.setState({searchResults: this.getOptionsForValue(value, this.props.options),
-                   selection: '',
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
-                   entryValue: value});
+                   selection: '', entryValue: value});
   },
 
   _onEnter: function(event) {
-<<<<<<< HEAD
-    //something selected in the typeahead
-    if (!!this.refs.sel && this.refs.sel.state.selection) {
-      this._onOptionSelected(this.refs.sel.state.selection);
-    }
-    //something is typed in the input
-    else if(this.state.entryValue) {
-      this._onOptionSelected(this.state.entryValue);
-      this.props.onKeyDown(event);
-    }
-    //neither the typeahead has a selection nor an input value exists
-    else {
-      return this.props.onKeyDown(event);
-    }
-  },
-
-  _onEscape: function() {
-    this.props.onBlur();
-=======
     var selection = this.getSelection();
     if (!selection) {
       return this.props.onKeyDown(event);
@@ -253,7 +223,6 @@ var Typeahead = React.createClass({
     this.setState({
       selectionIndex: null
     });
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   //If tab, just use the first entry in the typeaheads suggestions
@@ -274,15 +243,8 @@ var Typeahead = React.createClass({
   eventMap: function(event) {
     var events = {};
 
-<<<<<<< HEAD
-    if (!!this.refs.sel) {
-      events[KeyEvent.DOM_VK_DOWN] = this.refs.sel.navDown;
-      events[KeyEvent.DOM_VK_UP] = this.refs.sel.navUp;
-    }
-=======
     events[KeyEvent.DOM_VK_UP] = this.navUp;
     events[KeyEvent.DOM_VK_DOWN] = this.navDown;
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     events[KeyEvent.DOM_VK_RETURN] = events[KeyEvent.DOM_VK_ENTER] = this._onEnter;
     events[KeyEvent.DOM_VK_ESCAPE] = this._onEscape;
     events[KeyEvent.DOM_VK_TAB] = this._onTab;
@@ -326,15 +288,12 @@ var Typeahead = React.createClass({
   },
 
   _onKeyDown: function(event) {
-<<<<<<< HEAD
-=======
     // If there are no visible elements, don't perform selector navigation.
     // Just pass this up to the upstream onKeydown handler.
     // Also skip if the user is pressing the shift key, since none of our handlers are looking for shift
     if (!this._hasHint() || event.shiftKey) {
       return this.props.onKeyDown(event);
     }
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
 
     var handler = this.eventMap()[event.keyCode];
 

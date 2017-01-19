@@ -37,13 +37,10 @@ var TypeaheadTokenizer = React.createClass({
     onKeyPress: React.PropTypes.func,
     onKeyUp: React.PropTypes.func,
     onTokenAdd: React.PropTypes.func,
-<<<<<<< HEAD
     onTokenApprove: React.PropTypes.func,
     onTokenDisapprove: React.PropTypes.func,
     onDuplicateAdd: React.PropTypes.func,
-    filterOption: React.PropTypes.func,
     maxVisible: React.PropTypes.number
-=======
     onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func,
     filterOption: React.PropTypes.oneOfType([
@@ -59,10 +56,8 @@ var TypeaheadTokenizer = React.createClass({
       React.PropTypes.string,
       React.PropTypes.func
     ]),
-    maxVisible: React.PropTypes.number,
     resultsTruncatedMessage: React.PropTypes.string,
     defaultClassNames: React.PropTypes.bool
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   getInitialState: function() {
@@ -100,8 +95,6 @@ var TypeaheadTokenizer = React.createClass({
     };
   },
 
-<<<<<<< HEAD
-=======
   componentWillReceiveProps: function(nextProps){
     // if we get new defaultProps, update selected
     if (_arraysAreDifferent(this.props.defaultSelected, nextProps.defaultSelected)){
@@ -109,37 +102,20 @@ var TypeaheadTokenizer = React.createClass({
     }
   },
 
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   focus: function(){
     this.refs.typeahead.focus();
   },
 
-<<<<<<< HEAD
-=======
   getSelectedTokens: function(){
     return this.state.selected;
   },
 
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   // TODO: Support initialized tokens
   //
   _renderTokens: function() {
     var tokenClasses = {};
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
-<<<<<<< HEAD
-    //add normal tokens
-    var result = this.state.selected.map(function(selected, idx) {
-      return (
-        <Token
-        className={classNames(tokenClasses, (!!selected.class ? selected.class : ''))}
-        onRemove={ this._removeTokenForValue }
-        onApprove={ this._approveTokenForValue }
-        onDisapprove={ this._disapproveTokenForValue }
-        isPermanent={selected.perm}
-        isSuggested={selected.suggested}
-        name={selected.name}/>
-      )
-=======
+
     var classList = classNames(tokenClasses);
     var result = this.state.selected.map(function(selected) {
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
@@ -147,13 +123,16 @@ var TypeaheadTokenizer = React.createClass({
       return (
         <Token key={displayString} className={classList}
           onRemove={this._removeTokenForValue}
+          onApprove={ this._approveTokenForValue }
+          onDisapprove={ this._disapproveTokenForValue }
+          isPermanent={selected.perm}
+          isSuggested={selected.suggested}
           object={selected}
           value={value}
           name={this.props.name}>
           {displayString}
         </Token>
       );
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     }, this);
     return result;
   },
@@ -164,7 +143,6 @@ var TypeaheadTokenizer = React.createClass({
   },
 
   _onKeyDown: function(event) {
-<<<<<<< HEAD
     //do nothing no (used to be to backspace delete tokens)
   },
 
@@ -183,30 +161,6 @@ var TypeaheadTokenizer = React.createClass({
     this.setState({selected: this.state.selected});
     this.props.onTokenDisapprove(value);
     return;
-=======
-    // We only care about intercepting backspaces
-    if (event.keyCode === KeyEvent.DOM_VK_BACK_SPACE) {
-      return this._handleBackspace(event);
-    }
-    this.props.onKeyDown(event);
-  },
-
-  _handleBackspace: function(event){
-    // No tokens
-    if (!this.state.selected.length) {
-      return;
-    }
-
-    // Remove token ONLY when bksp pressed at beginning of line
-    // without a selection
-    var entry = this.refs.typeahead.refs.entry;
-    if (entry.selectionStart == entry.selectionEnd &&
-        entry.selectionStart == 0) {
-      this._removeTokenForValue(
-        this.state.selected[this.state.selected.length - 1]);
-      event.preventDefault();
-    }
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   _removeTokenForValue: function(value) {
@@ -242,10 +196,6 @@ var TypeaheadTokenizer = React.createClass({
     this.state.selected.push(obj);
     this.setState({selected: this.state.selected});
     this.refs.typeahead.setEntryText("");
-<<<<<<< HEAD
-=======
-    this.props.onTokenAdd(value);
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   render: function() {
