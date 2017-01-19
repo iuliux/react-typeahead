@@ -40,7 +40,7 @@ var TypeaheadTokenizer = React.createClass({
     onTokenApprove: React.PropTypes.func,
     onTokenDisapprove: React.PropTypes.func,
     onDuplicateAdd: React.PropTypes.func,
-    maxVisible: React.PropTypes.number
+    maxVisible: React.PropTypes.number,
     onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func,
     filterOption: React.PropTypes.oneOfType([

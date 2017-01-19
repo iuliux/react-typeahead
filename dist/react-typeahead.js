@@ -282,23 +282,18 @@ var TypeaheadTokenizer = React.createClass({
     onKeyPress: React.PropTypes.func,
     onKeyUp: React.PropTypes.func,
     onTokenAdd: React.PropTypes.func,
-<<<<<<< HEAD
     onTokenApprove: React.PropTypes.func,
     onTokenDisapprove: React.PropTypes.func,
     onDuplicateAdd: React.PropTypes.func,
-    filterOption: React.PropTypes.func,
-    maxVisible: React.PropTypes.number
-=======
+    maxVisible: React.PropTypes.number,
     onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func,
     filterOption: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]),
     searchOptions: React.PropTypes.func,
     displayOption: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]),
     formInputOption: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]),
-    maxVisible: React.PropTypes.number,
     resultsTruncatedMessage: React.PropTypes.string,
     defaultClassNames: React.PropTypes.bool
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   getInitialState: function () {
@@ -319,19 +314,6 @@ var TypeaheadTokenizer = React.createClass({
       placeholder: "",
       disabled: false,
       inputProps: {},
-<<<<<<< HEAD
-      onTokenAdd: function() {},
-      onTokenRemove: function() {},
-      onTokenApprove: function() {},
-      onDuplicateAdd: function() {},
-    };
-  },
-
-  focus: function(){
-    this.refs.typeahead.focus();
-  },
-
-=======
       defaultClassNames: true,
       filterOption: null,
       searchOptions: null,
@@ -345,7 +327,9 @@ var TypeaheadTokenizer = React.createClass({
       onFocus: function (event) {},
       onBlur: function (event) {},
       onTokenAdd: function () {},
-      onTokenRemove: function () {}
+      onTokenRemove: function () {},
+      onTokenApprove: function () {},
+      onDuplicateAdd: function () {}
     };
   },
 
@@ -364,26 +348,12 @@ var TypeaheadTokenizer = React.createClass({
     return this.state.selected;
   },
 
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   // TODO: Support initialized tokens
   //
   _renderTokens: function () {
     var tokenClasses = {};
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
-<<<<<<< HEAD
-    //add normal tokens
-    var result = this.state.selected.map(function(selected, idx) {
-      return (
-        React.createElement(Token, {
-        className: classNames(tokenClasses, (!!selected.class ? selected.class : '')), 
-        onRemove:  this._removeTokenForValue, 
-        onApprove:  this._approveTokenForValue, 
-        onDisapprove:  this._disapproveTokenForValue, 
-        isPermanent: selected.perm, 
-        isSuggested: selected.suggested, 
-        name: selected.name})
-      )
-=======
+
     var classList = classNames(tokenClasses);
     var result = this.state.selected.map(function (selected) {
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
@@ -392,12 +362,15 @@ var TypeaheadTokenizer = React.createClass({
         Token,
         { key: displayString, className: classList,
           onRemove: this._removeTokenForValue,
+          onApprove: this._approveTokenForValue,
+          onDisapprove: this._disapproveTokenForValue,
+          isPermanent: selected.perm,
+          isSuggested: selected.suggested,
           object: selected,
           value: value,
           name: this.props.name },
         displayString
       );
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     }, this);
     return result;
   },
@@ -407,76 +380,43 @@ var TypeaheadTokenizer = React.createClass({
     return this.props.options;
   },
 
-<<<<<<< HEAD
-  _onKeyDown: function(event) {
+  _onKeyDown: function (event) {
     //do nothing no (used to be to backspace delete tokens)
   },
 
-  _approveTokenForValue: function(value) {
+  _approveTokenForValue: function (value) {
     this.props.onTokenApprove(value);
     return;
   },
 
-  _disapproveTokenForValue: function(value) {
+  _disapproveTokenForValue: function (value) {
     var index = this._keyInSelected(value);
     if (index == -1) {
       return;
     }
 
     this.state.selected.splice(index, 1);
-    this.setState({selected: this.state.selected});
+    this.setState({ selected: this.state.selected });
     this.props.onTokenDisapprove(value);
     return;
   },
 
-  _removeTokenForValue: function(value) {
-    var index = this._keyInSelected(value);
-=======
-  _onKeyDown: function (event) {
-    // We only care about intercepting backspaces
-    if (event.keyCode === KeyEvent.DOM_VK_BACK_SPACE) {
-      return this._handleBackspace(event);
-    }
-    this.props.onKeyDown(event);
-  },
-
-  _handleBackspace: function (event) {
-    // No tokens
-    if (!this.state.selected.length) {
-      return;
-    }
-
-    // Remove token ONLY when bksp pressed at beginning of line
-    // without a selection
-    var entry = this.refs.typeahead.refs.entry;
-    if (entry.selectionStart == entry.selectionEnd && entry.selectionStart == 0) {
-      this._removeTokenForValue(this.state.selected[this.state.selected.length - 1]);
-      event.preventDefault();
-    }
-  },
-
   _removeTokenForValue: function (value) {
-    var index = this.state.selected.indexOf(value);
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
+    var index = this._keyInSelected(value);
     if (index == -1) {
       return;
     }
 
     this.state.selected.splice(index, 1);
-<<<<<<< HEAD
-    this.setState({selected: this.state.selected});
-=======
     this.setState({ selected: this.state.selected });
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     this.props.onTokenRemove(value);
     return;
   },
 
-<<<<<<< HEAD
-  _keyInSelected: function(value) {
-    for (var i=0; i<this.state.selected.length; i++) {
+  _keyInSelected: function (value) {
+    for (var i = 0; i < this.state.selected.length; i++) {
       var obj = this.state.selected[i];
-      var value = typeof value === 'object' ? (value.name || '') : value;
+      var value = typeof value === 'object' ? value.name || '' : value;
       if (obj.name.toLowerCase() === value.toLowerCase()) {
         return i;
       }
@@ -484,26 +424,16 @@ var TypeaheadTokenizer = React.createClass({
     return -1;
   },
 
-  _addTokenForValue: function(value) {
+  _addTokenForValue: function (value) {
     if (this._keyInSelected(value) != -1) {
       this.props.onDuplicateAdd(value);
       return;
     }
     this.props.onTokenAdd(value);
-    var obj = { name : value, perm : false, class : 'M'}; //Class is automatically 'M' because you can only enter manual tags
+    var obj = { name: value, perm: false, class: 'M' }; //Class is automatically 'M' because you can only enter manual tags
     this.state.selected.push(obj);
-    this.setState({selected: this.state.selected});
-    this.refs.typeahead.setEntryText("");
-=======
-  _addTokenForValue: function (value) {
-    if (this.state.selected.indexOf(value) != -1) {
-      return;
-    }
-    this.state.selected.push(value);
     this.setState({ selected: this.state.selected });
     this.refs.typeahead.setEntryText("");
-    this.props.onTokenAdd(value);
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   render: function () {
@@ -562,80 +492,58 @@ var Token = React.createClass({
     isSuggested: React.PropTypes.bool,
     className: React.PropTypes.string,
     children: React.PropTypes.string,
-<<<<<<< HEAD
     onRemove: React.PropTypes.func,
     onApprove: React.PropTypes.func,
     onDisapprove: React.PropTypes.func,
+    object: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+    value: React.PropTypes.string
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
-      onApprove: function() {},
-      onDisapprove: function() {},
+      onApprove: function () {},
+      onDisapprove: function () {}
     };
   },
 
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       isSuggested: this.props.isSuggested
     };
   },
 
-  render: function() {
+  render: function () {
     var actions;
-    if (!this.props.isPermanent && !this.state.isSuggested){
+    if (!this.props.isPermanent && !this.state.isSuggested) {
       actions = this._renderCloseButton();
     } else if (this.state.isSuggested) {
       actions = this._renderSuggestedConfirmation();
     }
 
-    var className = classNames(
-      "typeahead-token",
-      this._isSpecialTag(this.props.name),
-      this.props.className
-    );
-
-    return (
-      React.createElement("div", {className: className}, 
-        this._renderHiddenInput(), 
-        this._renderTagTypeIcon(), " ", '\u00A0', 
-        this.props.name, 
-        actions
-      )
-    );
-  },
-
-  _isSpecialTag: function(name) {
-    if (name.indexOf("@") > -1) {
-      return "mention ";
-    }
-    else if (name.indexOf("#") > -1) {
-      return "hashtag ";
-    }
-    return "";
-  },
-
-  _renderHiddenInput: function() {
-=======
-    object: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
-    onRemove: React.PropTypes.func,
-    value: React.PropTypes.string
-  },
-
-  render: function () {
-    var className = classNames(["typeahead-token", this.props.className]);
+    var className = classNames("typeahead-token", this._isSpecialTag(this.props.name), this.props.className);
 
     return React.createElement(
       'div',
       { className: className },
       this._renderHiddenInput(),
-      this.props.children,
-      this._renderCloseButton()
+      this._renderTagTypeIcon(),
+      ' ',
+      '\u00A0',
+      this.props.name,
+      actions
     );
   },
 
+  _isSpecialTag: function (name) {
+    if (name.indexOf("@") > -1) {
+      return "mention ";
+    } else if (name.indexOf("#") > -1) {
+      return "hashtag ";
+    }
+    return "";
+  },
+
   _renderHiddenInput: function () {
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     // If no name was set, don't create a hidden input
     if (!this.props.name) {
       return null;
@@ -648,63 +556,57 @@ var Token = React.createClass({
     });
   },
 
-<<<<<<< HEAD
-  _renderTagTypeIcon: function() {
+  _renderTagTypeIcon: function () {
     var icon;
     if (this.props.className == 'S') {
-      icon = (
-        React.createElement("i", {className: "fa fa-lightbulb-o tagtype-icon"})
-      );
+      icon = React.createElement('i', { className: 'fa fa-lightbulb-o tagtype-icon' });
     } else if (this.props.className == 'K') {
-      icon = (
-        React.createElement("i", {className: "fa fa-bookmark-o tagtype-icon"})
-      );
+      icon = React.createElement('i', { className: 'fa fa-bookmark-o tagtype-icon' });
     }
     return icon;
   },
 
-  _renderSuggestedConfirmation: function() {
-    return (
-      React.createElement("span", {className: "typeahead-token-controls"}, 
-        React.createElement("a", {className: "typeahead-token-check", href: "#", onClick: function(event) {
+  _renderSuggestedConfirmation: function () {
+    return React.createElement(
+      'span',
+      { className: 'typeahead-token-controls' },
+      React.createElement(
+        'a',
+        { className: 'typeahead-token-check', href: '#', onClick: function (event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
             this.setState({
-              isSuggested: false,
+              isSuggested: false
             });
-          }.bind(this)}, React.createElement("i", {className: "fa fa-check"})), 
-        React.createElement("a", {className: "typeahead-token-close", href: "#", onClick: function(event) {
+          }.bind(this) },
+        React.createElement('i', { className: 'fa fa-check' })
+      ),
+      React.createElement(
+        'a',
+        { className: 'typeahead-token-close', href: '#', onClick: function (event) {
             event.preventDefault();
             this.props.onDisapprove(this.props.name);
-          }.bind(this)}, React.createElement("i", {className: "fa fa-times"}))
+          }.bind(this) },
+        React.createElement('i', { className: 'fa fa-times' })
       )
     );
   },
 
-  _renderCloseButton: function() {
-    if (!this.props.onRemove) {
-      return "";
-    }
-    return (
-      React.createElement("span", {className: "typeahead-token-controls"}, 
-        React.createElement("a", {className: "typeahead-token-close", href: "#", onClick: function(event) {
-          event.preventDefault();
-          this.props.onRemove(this.props.name);
-        }.bind(this)}, React.createElement("i", {className: "fa fa-times"}))
-      )
-=======
   _renderCloseButton: function () {
     if (!this.props.onRemove) {
       return "";
     }
     return React.createElement(
-      'a',
-      { className: 'typeahead-token-close', href: '#', onClick: function (event) {
-          this.props.onRemove(this.props.object);
-          event.preventDefault();
-        }.bind(this) },
-      '×'
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
+      'span',
+      { className: 'typeahead-token-controls' },
+      React.createElement(
+        'a',
+        { className: 'typeahead-token-close', href: '#', onClick: function (event) {
+            this.props.onRemove(this.props.object);
+            event.preventDefault();
+          }.bind(this) },
+        React.createElement('i', { className: 'fa fa-times' })
+      )
     );
   }
 
@@ -805,7 +707,10 @@ var Typeahead = React.createClass({
 
       // Keep track of the focus state of the input element, to determine
       // whether to show options when empty (if showOptionsWhenEmpty is true)
-      isFocused: false
+      isFocused: false,
+
+      // true when focused, false onOptionSelected
+      showResults: false
     };
   },
 
@@ -824,7 +729,7 @@ var Typeahead = React.createClass({
     }
 
     var searchOptions = this._generateSearchFunction();
-    return result = searchOptions(value, options);
+    return searchOptions(value, options);
   },
 
   setEntryText: function (value) {
@@ -832,23 +737,12 @@ var Typeahead = React.createClass({
     this._onTextEntryUpdated();
   },
 
-<<<<<<< HEAD
-  focus: function(){
-    this.refs.entry.getDOMNode().focus();
-  },
-
-  _hasCustomValue: function() {
-    if (this.props.allowCustomValues > 0 &&
-      this.state.entryValue.length >= this.props.allowCustomValues &&
-      this.state.visible.indexOf(this.state.entryValue) < 0) {
-=======
   focus: function () {
     this.refs.entry.focus();
   },
 
   _hasCustomValue: function () {
     if (this.props.allowCustomValues > 0 && this.state.entryValue.length >= this.props.allowCustomValues && this.state.searchResults.indexOf(this.state.entryValue) < 0) {
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
       return true;
     }
     return false;
@@ -910,48 +804,15 @@ var Typeahead = React.createClass({
     nEntry.value = optionString;
     this.setState({ searchResults: this.getOptionsForValue(optionString, this.props.options),
       selection: formInputOptionString,
-      entryValue: optionString });
+      entryValue: optionString,
+      showResults: false });
     return this.props.onOptionSelected(option, event);
   },
 
-<<<<<<< HEAD
-  _onTextEntryUpdated: function() {
-    var value = this.refs.entry.getDOMNode().value.toLowerCase();
-    this.setState({visible: this.getOptionsForValue(value, this.props.options),
-                   selection: null,
-                   entryValue: value});
-  },
-
-  _onEnter: function(event) {
-    //something selected in the typeahead
-    if (!!this.refs.sel && this.refs.sel.state.selection) {
-      this._onOptionSelected(this.refs.sel.state.selection);
-    }
-    //something is typed in the input
-    else if(this.state.entryValue) {
-      this._onOptionSelected(this.state.entryValue);
-      this.props.onKeyDown(event);
-    }
-    //neither the typeahead has a selection nor an input value exists
-    else {
-      return this.props.onKeyDown(event);
-    }
-  },
-
-  _onEscape: function() {
-    this.props.onBlur();
-  },
-
-  //If tab, just use the first entry in the typeaheads suggestions
-  _onTab: function(event) {
-    var option = this.refs.sel.state.selection ?
-      this.refs.sel.state.selection : (this.state.visible.length > 0 ? this.state.visible[0] : null);
-=======
   _onTextEntryUpdated: function () {
-    var value = this.refs.entry.value;
+    var value = this.refs.entry.value.toLowerCase();
     this.setState({ searchResults: this.getOptionsForValue(value, this.props.options),
-      selection: '',
-      entryValue: value });
+      selection: '', entryValue: value });
   },
 
   _onEnter: function (event) {
@@ -968,10 +829,10 @@ var Typeahead = React.createClass({
     });
   },
 
+  //If tab, just use the first entry in the typeaheads suggestions
   _onTab: function (event) {
     var selection = this.getSelection();
     var option = selection ? selection : this.state.searchResults.length > 0 ? this.state.searchResults[0] : null;
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
 
     if (option === null && this._hasCustomValue()) {
       option = this._getCustomValue();
@@ -985,15 +846,8 @@ var Typeahead = React.createClass({
   eventMap: function (event) {
     var events = {};
 
-<<<<<<< HEAD
-    if (!!this.refs.sel) {
-      events[KeyEvent.DOM_VK_DOWN] = this.refs.sel.navDown;
-      events[KeyEvent.DOM_VK_UP] = this.refs.sel.navUp;
-    }
-=======
     events[KeyEvent.DOM_VK_UP] = this.navUp;
     events[KeyEvent.DOM_VK_DOWN] = this.navDown;
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
     events[KeyEvent.DOM_VK_RETURN] = events[KeyEvent.DOM_VK_ENTER] = this._onEnter;
     events[KeyEvent.DOM_VK_ESCAPE] = this._onEscape;
     events[KeyEvent.DOM_VK_TAB] = this._onTab;
@@ -1036,9 +890,6 @@ var Typeahead = React.createClass({
     this._onTextEntryUpdated();
   },
 
-<<<<<<< HEAD
-  _onKeyDown: function(event) {
-=======
   _onKeyDown: function (event) {
     // If there are no visible elements, don't perform selector navigation.
     // Just pass this up to the upstream onKeydown handler.
@@ -1046,10 +897,8 @@ var Typeahead = React.createClass({
     if (!this._hasHint() || event.shiftKey) {
       return this.props.onKeyDown(event);
     }
->>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
 
     var handler = this.eventMap()[event.keyCode];
-
 
     if (handler) {
       handler(event);
@@ -1095,12 +944,12 @@ var Typeahead = React.createClass({
         onFocus: this._onFocus,
         onBlur: this._onBlur
       })),
-      this._renderIncrementalSearchResults()
+      this.state.showResults && this._renderIncrementalSearchResults()
     );
   },
 
   _onFocus: function (event) {
-    this.setState({ isFocused: true }, function () {
+    this.setState({ isFocused: true, showResults: true }, function () {
       this._onTextEntryUpdated();
     }.bind(this));
     if (this.props.onFocus) {

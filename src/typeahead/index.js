@@ -206,7 +206,7 @@ var Typeahead = React.createClass({
   },
 
   _onTextEntryUpdated: function() {
-    var value = this.refs.entry..value.toLowerCase();
+    var value = this.refs.entry.value.toLowerCase();
     this.setState({searchResults: this.getOptionsForValue(value, this.props.options),
                    selection: '', entryValue: value});
   },
