@@ -368,7 +368,7 @@ var TypeaheadTokenizer = React.createClass({
           isSuggested: selected.suggested,
           object: selected,
           value: value,
-          name: this.props.name },
+          name: selected.name },
         displayString
       );
     }, this);
