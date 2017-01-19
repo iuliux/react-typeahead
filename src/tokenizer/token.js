@@ -45,7 +45,6 @@ var Token = React.createClass({
 
     var className = classNames(
       "typeahead-token",
-      this._isSpecialTag(this.props.name),
       this.props.className
     );
 
@@ -57,16 +56,6 @@ var Token = React.createClass({
         {actions}
       </div>
     );
-  },
-
-  _isSpecialTag: function(name) {
-    if (name.indexOf("@") > -1) {
-      return "mention ";
-    }
-    else if (name.indexOf("#") > -1) {
-      return "hashtag ";
-    }
-    return "";
   },
 
   _renderHiddenInput: function() {
