@@ -520,7 +520,7 @@ var Token = React.createClass({
       actions = this._renderSuggestedConfirmation();
     }
 
-    var className = classNames("typeahead-token", this._isSpecialTag(this.props.name), this.props.className);
+    var className = classNames("typeahead-token", this.props.className);
 
     return React.createElement(
       'div',
@@ -532,15 +532,6 @@ var Token = React.createClass({
       this.props.name,
       actions
     );
-  },
-
-  _isSpecialTag: function (name) {
-    if (name.indexOf("@") > -1) {
-      return "mention ";
-    } else if (name.indexOf("#") > -1) {
-      return "hashtag ";
-    }
-    return "";
   },
 
   _renderHiddenInput: function () {
