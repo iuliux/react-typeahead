@@ -1,7 +1,3 @@
-/**
- * @jsx React.DOM
- */
-
 var React = require('react');
 var classNames = require('classnames');
 
@@ -16,6 +12,7 @@ var Token = React.createClass({
     isSuggested: React.PropTypes.bool,
     className: React.PropTypes.string,
     children: React.PropTypes.string,
+<<<<<<< HEAD
     onRemove: React.PropTypes.func,
     onApprove: React.PropTypes.func,
     onDisapprove: React.PropTypes.func,
@@ -32,6 +29,14 @@ var Token = React.createClass({
     return {
       isSuggested: this.props.isSuggested
     };
+=======
+    object: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.object,
+    ]),
+    onRemove: React.PropTypes.func,
+    value: React.PropTypes.string
+>>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
   },
 
   render: function() {
@@ -78,7 +83,7 @@ var Token = React.createClass({
       <input
         type="hidden"
         name={ this.props.name + '[]' }
-        value={ this.props.children }
+        value={ this.props.value || this.props.object }
       />
     );
   },
@@ -120,8 +125,13 @@ var Token = React.createClass({
       return "";
     }
     return (
+<<<<<<< HEAD
       <span className="typeahead-token-controls">
         <a className="typeahead-token-close" href="#" onClick={function(event) {
+=======
+      <a className="typeahead-token-close" href="#" onClick={function(event) {
+          this.props.onRemove(this.props.object);
+>>>>>>> dc92754b45b94e3abf741b7b0048224eaf150adf
           event.preventDefault();
           this.props.onRemove(this.props.name);
         }.bind(this)}><i className="fa fa-times"/></a>
