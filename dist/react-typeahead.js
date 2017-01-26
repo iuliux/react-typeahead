@@ -359,17 +359,22 @@ var TypeaheadTokenizer = React.createClass({
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
       var value = Accessor.valueForOption(this.props.formInputOption || this.props.displayOption, selected);
       return React.createElement(
-        Token,
-        { key: displayString, className: classList,
-          onRemove: this._removeTokenForValue,
-          onApprove: this._approveTokenForValue,
-          onDisapprove: this._disapproveTokenForValue,
-          isPermanent: selected.perm,
-          isSuggested: selected.suggested,
-          object: selected,
-          value: value,
-          name: selected.name },
-        displayString
+        'span',
+        null,
+        React.createElement(
+          Token,
+          { key: displayString,
+            className: classNames(tokenClasses, !!selected.class ? selected.class : ''),
+            onRemove: this._removeTokenForValue,
+            onApprove: this._approveTokenForValue,
+            onDisapprove: this._disapproveTokenForValue,
+            isPermanent: selected.perm,
+            isSuggested: selected.suggested,
+            object: selected,
+            value: value,
+            name: selected.name },
+          displayString
+        )
       );
     }, this);
     return result;
@@ -808,8 +813,9 @@ var Typeahead = React.createClass({
 
   _onEnter: function (event) {
     var selection = this.getSelection();
-    if (!selection) {
-      return this.props.onKeyDown(event);
+    if (this.state.entryValue) {
+      this._onOptionSelected(this.state.entryValue);
+      this.props.onKeyDown(event);
     }
     return this._onOptionSelected(selection, event);
   },
@@ -882,13 +888,6 @@ var Typeahead = React.createClass({
   },
 
   _onKeyDown: function (event) {
-    // If there are no visible elements, don't perform selector navigation.
-    // Just pass this up to the upstream onKeydown handler.
-    // Also skip if the user is pressing the shift key, since none of our handlers are looking for shift
-    if (!this._hasHint() || event.shiftKey) {
-      return this.props.onKeyDown(event);
-    }
-
     var handler = this.eventMap()[event.keyCode];
 
     if (handler) {

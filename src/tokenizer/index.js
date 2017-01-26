@@ -121,17 +121,20 @@ var TypeaheadTokenizer = React.createClass({
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
       var value = Accessor.valueForOption(this.props.formInputOption || this.props.displayOption, selected);
       return (
-        <Token key={displayString} className={classList}
-          onRemove={this._removeTokenForValue}
-          onApprove={ this._approveTokenForValue }
-          onDisapprove={ this._disapproveTokenForValue }
-          isPermanent={selected.perm}
-          isSuggested={selected.suggested}
-          object={selected}
-          value={value}
-          name={selected.name}>
-          {displayString}
-        </Token>
+        <span>
+          <Token key={displayString}
+            className={classNames(tokenClasses, (!!selected.class ? selected.class : ''))}
+            onRemove={this._removeTokenForValue}
+            onApprove={ this._approveTokenForValue }
+            onDisapprove={ this._disapproveTokenForValue }
+            isPermanent={selected.perm}
+            isSuggested={selected.suggested}
+            object={selected}
+            value={value}
+            name={selected.name}>
+            {displayString}
+          </Token>
+        </span>
       );
     }, this);
     return result;
