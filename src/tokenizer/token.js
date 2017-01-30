@@ -11,7 +11,10 @@ var Token = React.createClass({
     isPermanent: React.PropTypes.bool,
     isSuggested: React.PropTypes.bool,
     className: React.PropTypes.string,
-    children: React.PropTypes.string,
+    children: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.object,
+    ]),
     onRemove: React.PropTypes.func,
     onApprove: React.PropTypes.func,
     onDisapprove: React.PropTypes.func,
@@ -19,7 +22,10 @@ var Token = React.createClass({
       React.PropTypes.string,
       React.PropTypes.object,
     ]),
-    value: React.PropTypes.string
+    value: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.object,
+    ])
   },
 
   getDefaultProps: function() {
@@ -49,12 +55,14 @@ var Token = React.createClass({
     );
 
     return (
+      <span>
       <div className={className}>
         {this._renderHiddenInput()}
         {this._renderTagTypeIcon()} {'\u00A0'}
         {this.props.name}
         {actions}
       </div>
+      </span>
     );
   },
 
@@ -90,14 +98,14 @@ var Token = React.createClass({
   _renderSuggestedConfirmation: function() {
     return (
       <span className="typeahead-token-controls">
-        <a className="typeahead-token-check" href="#" onClick={function(event) {
+        <a className="typeahead-token-check" onClick={function(event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
             this.setState({
               isSuggested: false,
             });
           }.bind(this)}><i className="fa fa-check"/></a>
-        <a className="typeahead-token-close" href="#" onClick={function(event) {
+        <a className="typeahead-token-close" onClick={function(event) {
             event.preventDefault();
             this.props.onDisapprove(this.props.name);
           }.bind(this)}><i className="fa fa-times"/></a>
@@ -111,8 +119,8 @@ var Token = React.createClass({
     }
     return (
       <span className="typeahead-token-controls">
-        <a className="typeahead-token-close" href="#" onClick={function(event) {
-          this.props.onRemove(this.props.object);
+        <a className="typeahead-token-close" onClick={function(event) {
+          this.props.onRemove(this.props.name);
           event.preventDefault();
         }.bind(this)}><i className="fa fa-times"/></a>
       </span>

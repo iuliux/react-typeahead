@@ -121,8 +121,8 @@ var TypeaheadTokenizer = React.createClass({
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
       var value = Accessor.valueForOption(this.props.formInputOption || this.props.displayOption, selected);
       return (
-        <span>
-          <Token key={displayString}
+          <Token
+            key={selected.key}
             className={classNames(tokenClasses, (!!selected.class ? selected.class : ''))}
             onRemove={this._removeTokenForValue}
             onApprove={ this._approveTokenForValue }
@@ -134,7 +134,6 @@ var TypeaheadTokenizer = React.createClass({
             name={selected.name}>
             {displayString}
           </Token>
-        </span>
       );
     }, this);
     return result;

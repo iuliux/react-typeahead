@@ -359,22 +359,19 @@ var TypeaheadTokenizer = React.createClass({
       var displayString = Accessor.valueForOption(this.props.displayOption, selected);
       var value = Accessor.valueForOption(this.props.formInputOption || this.props.displayOption, selected);
       return React.createElement(
-        'span',
-        null,
-        React.createElement(
-          Token,
-          { key: displayString,
-            className: classNames(tokenClasses, !!selected.class ? selected.class : ''),
-            onRemove: this._removeTokenForValue,
-            onApprove: this._approveTokenForValue,
-            onDisapprove: this._disapproveTokenForValue,
-            isPermanent: selected.perm,
-            isSuggested: selected.suggested,
-            object: selected,
-            value: value,
-            name: selected.name },
-          displayString
-        )
+        Token,
+        {
+          key: selected.key,
+          className: classNames(tokenClasses, !!selected.class ? selected.class : ''),
+          onRemove: this._removeTokenForValue,
+          onApprove: this._approveTokenForValue,
+          onDisapprove: this._disapproveTokenForValue,
+          isPermanent: selected.perm,
+          isSuggested: selected.suggested,
+          object: selected,
+          value: value,
+          name: selected.name },
+        displayString
       );
     }, this);
     return result;
@@ -496,12 +493,12 @@ var Token = React.createClass({
     isPermanent: React.PropTypes.bool,
     isSuggested: React.PropTypes.bool,
     className: React.PropTypes.string,
-    children: React.PropTypes.string,
+    children: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
     onRemove: React.PropTypes.func,
     onApprove: React.PropTypes.func,
     onDisapprove: React.PropTypes.func,
     object: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
-    value: React.PropTypes.string
+    value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object])
   },
 
   getDefaultProps: function () {
@@ -528,14 +525,18 @@ var Token = React.createClass({
     var className = classNames("typeahead-token", this.props.className);
 
     return React.createElement(
-      'div',
-      { className: className },
-      this._renderHiddenInput(),
-      this._renderTagTypeIcon(),
-      ' ',
-      '\u00A0',
-      this.props.name,
-      actions
+      'span',
+      null,
+      React.createElement(
+        'div',
+        { className: className },
+        this._renderHiddenInput(),
+        this._renderTagTypeIcon(),
+        ' ',
+        '\u00A0',
+        this.props.name,
+        actions
+      )
     );
   },
 
@@ -568,7 +569,7 @@ var Token = React.createClass({
       { className: 'typeahead-token-controls' },
       React.createElement(
         'a',
-        { className: 'typeahead-token-check', href: '#', onClick: function (event) {
+        { className: 'typeahead-token-check', onClick: function (event) {
             event.preventDefault();
             this.props.onApprove(this.props.name);
             this.setState({
@@ -579,7 +580,7 @@ var Token = React.createClass({
       ),
       React.createElement(
         'a',
-        { className: 'typeahead-token-close', href: '#', onClick: function (event) {
+        { className: 'typeahead-token-close', onClick: function (event) {
             event.preventDefault();
             this.props.onDisapprove(this.props.name);
           }.bind(this) },
@@ -597,8 +598,8 @@ var Token = React.createClass({
       { className: 'typeahead-token-controls' },
       React.createElement(
         'a',
-        { className: 'typeahead-token-close', href: '#', onClick: function (event) {
-            this.props.onRemove(this.props.object);
+        { className: 'typeahead-token-close', onClick: function (event) {
+            this.props.onRemove(this.props.name);
             event.preventDefault();
           }.bind(this) },
         React.createElement('i', { className: 'fa fa-times' })
@@ -813,9 +814,11 @@ var Typeahead = React.createClass({
 
   _onEnter: function (event) {
     var selection = this.getSelection();
-    if (this.state.entryValue) {
-      this._onOptionSelected(this.state.entryValue);
-      this.props.onKeyDown(event);
+    if (!selection) {
+      if (this.state.entryValue) {
+        this._onOptionSelected(this.state.entryValue);
+      }
+      return this.props.onKeyDown(event);
     }
     return this._onOptionSelected(selection, event);
   },
