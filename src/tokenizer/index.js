@@ -75,7 +75,8 @@ var TypeaheadTokenizer = React.createClass({
         onDisapprove={ this._disapproveTokenForValue }
         isPermanent={selected.perm}
         isSuggested={selected.suggested}
-        name={selected.name}/>
+        name={selected.name}
+        key={selected.name}/>
       )
     }, this);
     return result;
