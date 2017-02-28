@@ -1,8 +1,4 @@
-/**
- * @jsx React.DOM
- */
-
-var React = require('react/addons');
+var React = require('react');
 var classNames = require('classnames');
 
 /**
@@ -24,10 +20,6 @@ var TypeaheadOption = React.createClass({
         event.preventDefault();
       }
     };
-  },
-
-  getInitialState: function() {
-    return {};
   },
 
   render: function() {
